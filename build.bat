@@ -1,18 +1,10 @@
-@echo off@echo off
-
-setlocal enabledelayedexpansionREM Initialize MSVC environment if not already done
-
-call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+@echo off
+setlocal enabledelayedexpansion
 
 cd /d "%~dp0"
 
-REM Compile the DLL
-
-if not exist "build" mkdir buildcl /LD "ShellMenuExtender.cpp" /I"%WindowsSdkDir%Include" /link /DLL /OUT:"ShellMenuExtender.dll" /DEF:"ShellMenuExtender.def" shell32.lib ole32.lib user32.lib shlwapi.lib oleaut32.lib
-
+if not exist "build" mkdir build
 if not exist "logs" mkdir logs
-
-pause
 
 set "LOG_FILE=logs\build.log"
 
@@ -197,8 +189,28 @@ echo Log saved to: logs\build.log
 echo.
 
 :: Ask user if they want to install
+set "INSTALL_NOW="
 set /p "INSTALL_NOW=Do you want to install now? (Y/n): "
+
+:: Trim whitespace and convert to lowercase for comparison
+set "INSTALL_NOW=%INSTALL_NOW: =%"
 if /i "%INSTALL_NOW%"=="n" (
+    echo.
+    echo ========================================
+    echo Installation Skipped
+    echo ========================================
+    echo.
+    echo You can install later by running:
+    echo   build\app\install.bat
+    echo.
+    echo Or create a GitHub release:
+    echo   scripts\create_release.bat
+    echo.
+    echo ========================================
+    pause
+    exit /b 0
+)
+if /i "%INSTALL_NOW%"=="no" (
     echo.
     echo ========================================
     echo Installation Skipped
