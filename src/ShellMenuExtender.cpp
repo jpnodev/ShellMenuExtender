@@ -5,6 +5,9 @@
 #include <shellapi.h>
 #include <shlwapi.h>
 #include <exdisp.h>
+#include <shlobj.h>
+
+#pragma comment(lib, "shell32.lib")
 
 // External symbol for current module base
 extern "C" IMAGE_DOS_HEADER __ImageBase;
@@ -16,28 +19,40 @@ static const CLSID CLSID_ShellMenuExtender =
 static LONG g_refModule = 0;
 
 ShellMenuExtender::ShellMenuExtender() : m_refCount(1) {
-    // Load configuration from config directory
-    WCHAR dllPath[MAX_PATH];
-    GetModuleFileNameW((HINSTANCE)&__ImageBase, dllPath, MAX_PATH);
-    
-    // Get project root directory (parent of build/)
-    // First, remove the DLL filename
-    WCHAR* lastSlash = wcsrchr(dllPath, L'\\');
-    if (lastSlash) {
-        *lastSlash = L'\0';  // Null terminate to remove filename
+    // Get user's Documents folder
+    WCHAR documentsPath[MAX_PATH];
+    if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_MYDOCUMENTS, NULL, 0, documentsPath))) {
+        std::wstring configDir = documentsPath;
+        configDir += L"\\ShellMenuExtender";
+        
+        // Create directory if it doesn't exist
+        CreateDirectoryW(configDir.c_str(), NULL);
+        
+        std::wstring configPath = configDir + L"\\menu_config.json";
+        
+        // Copy default config if user config doesn't exist
+        if (GetFileAttributesW(configPath.c_str()) == INVALID_FILE_ATTRIBUTES) {
+            // Get installation directory
+            WCHAR dllPath[MAX_PATH];
+            GetModuleFileNameW((HINSTANCE)&__ImageBase, dllPath, MAX_PATH);
+            
+            // Remove DLL filename
+            WCHAR* lastSlash = wcsrchr(dllPath, L'\\');
+            if (lastSlash) *lastSlash = L'\0';
+            
+            // Remove "build" directory to get project root
+            lastSlash = wcsrchr(dllPath, L'\\');
+            if (lastSlash) *lastSlash = L'\0';
+            
+            std::wstring defaultConfig = dllPath;
+            defaultConfig += L"\\config\\menu_config.json";
+            
+            // Copy default config to user's Documents
+            CopyFileW(defaultConfig.c_str(), configPath.c_str(), FALSE);
+        }
+        
+        MenuConfig::Instance().Load(configPath);
     }
-    
-    // Now remove "build" directory to get to project root
-    lastSlash = wcsrchr(dllPath, L'\\');
-    if (lastSlash) {
-        *lastSlash = L'\0';  // Null terminate to remove "build"
-    }
-    
-    // Now dllPath points to project root
-    std::wstring configPath = dllPath;
-    configPath += L"\\config\\menu_config.json";
-    
-    MenuConfig::Instance().Load(configPath);
 }
 
 HRESULT __stdcall ShellMenuExtender::QueryInterface(REFIID riid, void** ppv) {

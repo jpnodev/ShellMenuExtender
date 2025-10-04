@@ -61,9 +61,8 @@ copy "package\AppInfo.exe.manifest" "release\%RELEASE_NAME%\package\" >nul
 
 :: Copy scripts (only install and uninstall)
 echo Copying installation scripts...
-copy "scripts\install.bat" "release\%RELEASE_NAME%\scripts\" >nul
-copy "scripts\register_sparse_package.bat" "release\%RELEASE_NAME%\scripts\" >nul
-copy "scripts\unregister_package.bat" "release\%RELEASE_NAME%\scripts\" >nul
+copy "scripts\install.bat" "release\%RELEASE_NAME%\install.bat" >nul
+copy "scripts\uninstall.bat" "release\%RELEASE_NAME%\uninstall.bat" >nul
 
 :: Copy config
 echo Copying configuration...
@@ -81,30 +80,60 @@ echo ========================================
 echo Shell Menu Extender v%VERSION%
 echo ========================================
 echo.
-echo INSTALLATION:
+echo Thank you for downloading Shell Menu Extender!
 echo.
-echo 1. Enable Developer Mode in Windows Settings
-echo    ^(Settings ^> Privacy ^& Security ^> For developers^)
+echo QUICK START:
 echo.
-echo 2. Right-click scripts\install.bat
+echo 1. Enable Developer Mode
+echo    - Open Windows Settings
+echo    - Go to: Privacy ^& Security ^> For developers
+echo    - Turn ON "Developer Mode"
 echo.
-echo 3. Select "Run as administrator"
+echo 2. Install
+echo    - Right-click install.bat
+echo    - Select "Run as administrator"
+echo    - Follow the prompts
 echo.
-echo 4. Follow on-screen prompts
+echo 3. Done!
+echo    - Right-click any file or folder
+echo    - Your custom menu items will appear
 echo.
 echo ========================================
 echo.
 echo CUSTOMIZATION:
 echo.
-echo Edit config\menu_config.json to customize menu items.
-echo Changes apply instantly - no need to reinstall!
+echo Your personal config is automatically created at:
+echo   %USERPROFILE%\Documents\ShellMenuExtender\menu_config.json
+echo.
+echo To customize your menu:
+echo   1. Open: notepad %USERPROFILE%\Documents\ShellMenuExtender\menu_config.json
+echo   2. Edit and save
+echo   3. Right-click to see changes instantly!
+echo.
+echo Changes apply INSTANTLY - no reinstall needed!
+echo.
+echo Example menu items:
+echo   - Open in PowerShell
+echo   - Open in Ubuntu/WSL
+echo   - Open in VS Code
+echo   - Git Bash
+echo   - And more...
+echo.
+echo See README.md for full configuration guide.
 echo.
 echo ========================================
 echo.
 echo UNINSTALL:
 echo.
-echo Right-click scripts\unregister_package.bat
-echo and run as administrator.
+echo Simply run uninstall.bat as administrator.
+echo.
+echo ========================================
+echo.
+echo NEED HELP?
+echo.
+echo - Check README.md for detailed documentation
+echo - Visit: https://github.com/jpnodev/ShellMenuExtender
+echo - Report issues on GitHub
 echo.
 echo ========================================
 ) > "release\%RELEASE_NAME%\INSTALL.txt"
@@ -112,9 +141,9 @@ echo ========================================
 :: Create ZIP archive
 echo.
 echo Creating ZIP archive...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Compress-Archive -Path 'release\%RELEASE_NAME%\*' -DestinationPath 'release\%RELEASE_NAME%.zip' -Force"
+call powershell -NoProfile -ExecutionPolicy Bypass -Command "& {Compress-Archive -Path 'release\%RELEASE_NAME%\*' -DestinationPath 'release\%RELEASE_NAME%.zip' -Force -ErrorAction Stop; exit 0}"
 
-if %ERRORLEVEL% EQU 0 (
+if exist "release\%RELEASE_NAME%.zip" (
     echo.
     echo ========================================
     echo Release created successfully!
@@ -127,20 +156,27 @@ if %ERRORLEVEL% EQU 0 (
     echo   - build\AppInfo.exe
     echo   - resources\icons\
     echo   - package\AppxManifest.xml
-    echo   - scripts\install.bat
-    echo   - scripts\unregister_package.bat
     echo   - config\menu_config.json
+    echo   - install.bat ^(simplified installer^)
+    echo   - uninstall.bat ^(uninstaller^)
     echo   - README.md
     echo   - INSTALL.txt
     echo.
+    echo Users just need to:
+    echo   1. Extract the ZIP
+    echo   2. Right-click install.bat
+    echo   3. Run as administrator
+    echo.
     echo Ready to upload to GitHub Releases!
     echo ========================================
-) else (
-    echo.
-    echo ERROR: Failed to create ZIP archive!
-    pause
-    exit /b 1
+    goto :release_success
 )
 
+echo.
+echo ERROR: Failed to create ZIP archive!
+pause
+exit /b 1
+
+:release_success
 echo.
 pause

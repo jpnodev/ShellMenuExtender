@@ -49,3 +49,6 @@ Desktop.ini
 
 # Debug artifacts
 _debug_test.txt
+
+# Private documentation (not for public repo)
+RELEASE.md

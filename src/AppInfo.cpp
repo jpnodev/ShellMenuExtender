@@ -2,6 +2,7 @@
 #include <commctrl.h>
 #include <dwmapi.h>
 #include <shellscalingapi.h>
+#include <shlobj.h>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -9,6 +10,7 @@
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "shcore.lib")
+#pragma comment(lib, "shell32.lib")
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // Control IDs
@@ -18,20 +20,14 @@
 #define COLOR_BG RGB(243, 243, 243)
 
 std::wstring LoadConfigPath() {
-    WCHAR exePath[MAX_PATH];
-    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-    
-    // Remove filename
-    WCHAR* lastSlash = wcsrchr(exePath, L'\\');
-    if (lastSlash) *lastSlash = L'\0';
-    
-    // Remove "build" directory
-    lastSlash = wcsrchr(exePath, L'\\');
-    if (lastSlash) *lastSlash = L'\0';
-    
-    std::wstring configPath = exePath;
-    configPath += L"\\config\\menu_config.json";
-    return configPath;
+    // Get user's Documents folder
+    WCHAR documentsPath[MAX_PATH];
+    if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_MYDOCUMENTS, NULL, 0, documentsPath))) {
+        std::wstring configPath = documentsPath;
+        configPath += L"\\ShellMenuExtender\\menu_config.json";
+        return configPath;
+    }
+    return L"";
 }
 
 int CountMenuItems() {
