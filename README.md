@@ -118,7 +118,7 @@ Use these in the `args` field:
 
 **Installation Steps:**
 
-1. **Download** the latest release from [GitHub Releases](https://github.com/yourusername/ShellMenuExtender/releases)
+1. **Download** the latest release from [GitHub Releases](https://github.com/jpnodev/ShellMenuExtender/releases)
 2. **Extract** the ZIP file to a permanent location (e.g., `C:\Program Files\ShellMenuExtender`)
 3. **Right-click** `scripts\install.bat` → **Run as administrator**
 4. **Done!** Right-click any file/folder to see your custom menu
@@ -148,7 +148,7 @@ Use these in the `args` field:
 
 ```powershell
 # Clone the repository
-git clone https://github.com/yourusername/ShellMenuExtender.git
+git clone https://github.com/jpnodev/ShellMenuExtender.git
 cd ShellMenuExtender
 
 # Build everything
