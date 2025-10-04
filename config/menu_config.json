@@ -1,0 +1,24 @@
+{
+  "menuItems": [
+    {
+        "id": "open_powershell",
+        "title": "Open in PowerShell",
+        "icon": "powershell.exe,0",
+        "command": "powershell.exe",
+        "args": "-NoExit -Command \"Set-Location '{path}'\"",
+        "workingDir": "",
+        "showWindow": "normal",
+        "subItems": []
+    },
+    {
+      "id": "open_ubuntu",
+      "title": "Open in Ubuntu",
+      "icon": "resources\\icons\\ubuntu_favicon-32x32.ico",
+      "command": "wt.exe",
+      "args": "-p \"Ubuntu\" -- wsl.exe --cd \"{wsl_path}\"",
+      "workingDir": "",
+      "showWindow": "normal",
+      "subItems": []
+    }
+  ]
+}

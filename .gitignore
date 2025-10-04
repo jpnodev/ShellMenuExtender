@@ -1,0 +1,51 @@
+# Build output
+build/
+*.dll
+*.exe
+*.obj
+*.res
+*.pdb
+*.ilk
+*.exp
+*.lib
+
+# Logs directory
+logs/
+*.log
+
+# Release bundles
+release/
+*.zip
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Windows metadata
+microsoft.system.package.metadata/
+Thumbs.db
+Desktop.ini
+
+# Backup files
+*.old
+*.bak
+*.backup
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# VS Code (keep settings, ignore workspace)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# macOS
+.DS_Store
+
+# Debug artifacts
+_debug_test.txt
