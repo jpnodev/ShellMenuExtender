@@ -52,3 +52,4 @@ _debug_test.txt
 
 # Private documentation (not for public repo)
 RELEASE.md
+RELEASE_NOTES_*.md
